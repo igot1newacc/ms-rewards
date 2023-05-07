@@ -12,6 +12,9 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v2
 
+      - name: Set Python IO encoding
+        run: echo "export PYTHONIOENCODING=utf-8" >> $GITHUB_ENV
+
       - name: Setup Python
         uses: actions/setup-python@v2
         with:
@@ -26,7 +29,6 @@ jobs:
         run: |
           pip install --upgrade pip
           pip install -r requirements.txt
-
       - name: Run ms_rewards_farmer.py
         run: |
           env\Scripts\activate.bat
