@@ -1,0 +1,33 @@
+name: MS Rewards Farmer
+
+on:
+  schedule:
+    - cron: '0 0 * * *' # Run daily at midnight UTC
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: windows-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Setup Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: '3.x'
+          
+      - name: Create virtual environment
+        run: |
+          python -m venv env
+          env\Scripts\activate.bat
+          
+      - name: Install dependencies
+        run: |
+          pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Run ms_rewards_farmer.py
+        run: |
+          env\Scripts\activate.bat
+          python ms_rewards_farmer.py
