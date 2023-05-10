@@ -2744,14 +2744,14 @@ def farmer():
                     completePunchCards(browser)
                 if not LOGS[CURRENT_ACCOUNT]['More promotions']:
                     completeMorePromotions(browser)
-                if not ARGS.skip_shopping and not LOGS[CURRENT_ACCOUNT]['MSN shopping game']:
-                    finished = False
-                    if ARGS.repeat_shopping:
-                        finished = completeMSNShoppingGame(browser)
-                        prYellow(
-                            "Running repeated MSN shopping. It will likely result in error due to msn shopping likely completed")
-                    if not finished:
-                        completeMSNShoppingGame(browser)
+#                 if not ARGS.skip_shopping and not LOGS[CURRENT_ACCOUNT]['MSN shopping game']:
+#                     finished = False
+#                     if ARGS.repeat_shopping:
+#                         finished = completeMSNShoppingGame(browser)
+#                         prYellow(
+#                             "Running repeated MSN shopping. It will likely result in error due to msn shopping likely completed")
+#                     if not finished:
+#                         completeMSNShoppingGame(browser)
                 remainingSearches, remainingSearchesM = getRemainingSearches(
                     browser)
                 MOBILE = bool(remainingSearchesM)
