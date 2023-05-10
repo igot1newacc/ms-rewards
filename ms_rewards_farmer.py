@@ -38,7 +38,7 @@ from tkinter import messagebox, ttk
 from math import ceil
 from exceptions import *
 
-# Added by AdiV
+# Added by Aditya
 sys.stdin.reconfigure(encoding='utf-8')
 sys.stdout.reconfigure(encoding='utf-8')
 
@@ -298,6 +298,8 @@ def login(browser: WebDriver, email: str, pwd: str, totpSecret: str, isMobile: b
                 "https://account.live.com/proofs/Add"):
             handleUnusualActivity(browser, isMobile)
             return
+        elif browser.title == "Help us secure your account" or browser.current_url.startswith("https://account.live.com/recover"):
+            raise UnusualActivityException
         elif isElementExists(browser, By.ID, 'mectrl_headerPicture') or 'Sign In or Create' in browser.title:
             browser.find_element(By.ID, 'mectrl_headerPicture').click()
             waitUntilVisible(browser, By.ID, 'i0118', 15)
@@ -367,6 +369,8 @@ def login(browser: WebDriver, email: str, pwd: str, totpSecret: str, isMobile: b
                 browser.current_url.startswith("https://account.live.com/proofs/Add"):
             handleUnusualActivity(browser, isMobile)
             return
+        elif browser.title == "Help us secure your account" or browser.current_url.startswith("https://account.live.com/recover"):
+            raise UnusualActivityException
     # Wait 5 seconds
     time.sleep(5)
     # Click Security Check
@@ -424,6 +428,10 @@ def RewardsLogin(browser: WebDriver):
         elif browser.find_element(By.XPATH, '//*[@id="error"]/h1').get_attribute(
                 'innerHTML') == 'Microsoft Rewards is not available in this country or region.':
             raise RegionException
+        else:
+            error_text = browser.find_element(By.XPATH, '//*[@id="error"]/h1').get_attribute("innerHTML")
+            prRed(f"[ERROR] {error_text}")
+            raise DashboardException
     except NoSuchElementException:
         pass
     handleFirstVisit(browser)
@@ -1539,6 +1547,8 @@ def completeMSNShoppingGame(browser: WebDriver) -> bool:
             if element.get_attribute("gamestate") == "active":
                 return element
             elif element.get_attribute("gamestate") == "idle":
+                browser.execute_script(
+                    "arguments[0].scrollIntoView();", element)
                 raise GamingCardIsNotActive
         else:
             return False
@@ -2887,9 +2897,27 @@ def farmer():
 
     except RegionException:
         browser.quit()
-        prRed('[ERROR] Microsoft Rewards is not available in this country or region !')
-        input('[ERROR] Press any key to close...')
-        os._exit(0)
+        if account.get("proxy", False):
+            LOGS[CURRENT_ACCOUNT]['Last check'] = 'Unusual activity detected !'
+            FINISHED_ACCOUNTS.append(CURRENT_ACCOUNT)
+            updateLogs()
+            cleanLogs()
+            prRed("[ERROR] Unusual activity detected !")
+            checkInternetConnection()
+            farmer()
+        else:
+            prRed('[ERROR] Microsoft Rewards is not available in this country or region !')
+            input('[ERROR] Press any key to close...')
+            os._exit(0)
+    
+    except DashboardException:
+        browser.quit()
+        LOGS[CURRENT_ACCOUNT]["Last check"] = "Unknown error !"
+        FINISHED_ACCOUNTS.append(CURRENT_ACCOUNT)
+        updateLogs()
+        cleanLogs()
+        checkInternetConnection()
+        farmer()
 
     except Exception as e:
         if "executable needs to be in PATH" in str(e):

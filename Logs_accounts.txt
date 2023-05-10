@@ -1,0 +1,12 @@
+{
+    "peer1peer@outlook.com": {
+        "Last check": "2023-05-10",
+        "Today's points": 0,
+        "Points": 0,
+        "Daily": false,
+        "Punch cards": false,
+        "More promotions": false,
+        "MSN shopping game": false,
+        "PC searches": false
+    }
+}
